@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
 
 @RestController
 public class MovieBookingController {
@@ -21,11 +25,19 @@ public class MovieBookingController {
 	@Autowired
 	private WebClient.Builder wBuilder;
 	
+	@Autowired
+	@Lazy
+	private EurekaClient eurekaClient;
+	
 	@GetMapping("/movies/book/{id}")
 	public ResponseEntity<BookingInfo> bookMovieTicket(@PathVariable Integer id) {
 		Map<String,Integer> uriVariables = new HashMap<>();
 		uriVariables.put("id", id);
-	    ResponseEntity<Movie> responseEntity  = restTemplate.getForEntity("http://localhost:8089/movies/{id}", Movie.class,uriVariables);
+	    ResponseEntity<Movie> responseEntity  = restTemplate.getForEntity("http://localhost:8765/MOVIE-CATALOGUE-SERVICE/movies/{id}", Movie.class,uriVariables);
+	    
+	    
+//	    InstanceInfo info = eurekaClient.getApplication("eureka-naming-servers").getInstances().get(0);
+//	    System.out.println("app name: "+info.getAppName());
 	    
 	    // Call to Movie-catalogue service to fetch movie with a given id
 	    Movie movie1 = wBuilder
