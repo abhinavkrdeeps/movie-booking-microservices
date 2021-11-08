@@ -11,4 +11,6 @@ Api Gateway (http://localhost/9090)
 Movie Catalogue Service (/movies/{id})
 
 Payment Service (/movies/book/{userId}/{price}/payment)
-![image](https://user-images.githubusercontent.com/31301292/140693325-c96a16f8-2a61-4169-bdad-69def5a3ca7f.png)
+
+![image](https://user-images.githubusercontent.com/31301292/140693409-2f78cd4b-4395-40d6-be7d-c930dd07cc49.png)
+
