@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PaymentResource {
-	
+
+	@GetMapping("/")
+	public String getHomePage(){
+		return "Hello World";
+	}
+
 	@GetMapping("/movies/book/{userId}/{price}/payment")
 	public PaymentSheet getPaymentGateway(@PathVariable String userId, @PathVariable String price) {
 

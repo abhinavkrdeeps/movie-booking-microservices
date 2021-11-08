@@ -32,6 +32,11 @@ public class MovieBookingController {
   @Lazy
   private PropertyConfig propertyConfig;
 
+  @GetMapping("/")
+  public String getHome(){
+    return "Hello World";
+  }
+
   @GetMapping("/movies/book/{id}")
   public ResponseEntity<BookingInfo> bookMovieTicket(@PathVariable Integer id) {
     Map<String, Integer> uriVariables = new HashMap<>();
@@ -65,6 +70,8 @@ public class MovieBookingController {
             .retrieve()
             .bodyToMono(PaymentSheet.class)
             .block();
+
+    // Creating booking info based on if payment got succeeded or not
     if (paymentSheet != null && paymentSheet.isSuccess()) {
       BookingInfo bookingInfo = new BookingInfo(1, movie1.getMovieId(), movie1.getPrice(), 1);
 
