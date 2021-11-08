@@ -67,7 +67,7 @@ public class MovieBookingController {
         uriVariables.put("id", id);
         ResponseEntity<Movie> responseEntity =
                 restTemplate.getForEntity(
-                        propertyConfig.getMovieCatalogueServiceUri() + "/fails", Movie.class, uriVariables);
+                        propertyConfig.getMovieCatalogueServiceUri(), Movie.class, uriVariables);
 
 
         // Call to Movie-catalogue service to fetch movie with a given id
