@@ -3,7 +3,10 @@ package com.wissen.training.bookingservice;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,32 +28,32 @@ public class MovieBookingController {
 
   @Autowired @Lazy private EurekaClient eurekaClient;
 
+  @Autowired
+  @Lazy
+  private PropertyConfig propertyConfig;
+
   @GetMapping("/movies/book/{id}")
   public ResponseEntity<BookingInfo> bookMovieTicket(@PathVariable Integer id) {
     Map<String, Integer> uriVariables = new HashMap<>();
     uriVariables.put("id", id);
     ResponseEntity<Movie> responseEntity =
         restTemplate.getForEntity(
-            "http://MOVIE-CATALOGUE-SERVICE/movies/{id}", Movie.class, uriVariables);
+            propertyConfig.getMovieCatalogueServiceUri(), Movie.class, uriVariables);
 
-    //	    InstanceInfo info =
-    // eurekaClient.getApplication("eureka-naming-servers").getInstances().get(0);
-    //	    System.out.println("app name: "+info.getAppName());
 
     // Call to Movie-catalogue service to fetch movie with a given id
     Movie movie1 =
         wBuilder
             .build()
             .get()
-            .uri("http://MOVIE-CATALOGUE-SERVICE/movies/{id}", uriVariables)
+            .uri(propertyConfig.getMovieCatalogueServiceUri(), uriVariables)
             .retrieve()
             .bodyToMono(Movie.class)
             .block();
 
     Movie movie = responseEntity.getBody();
 
-    // Call payment-service for performing payments and then book tickets
-    String paymentServiceUri = "http://PAYMENT-SERVICE/movies/book/{userId}/{price}/payment";
+    // Call payment-service for performing payments and then book tickets;
     Map<String, String> paymentServiceUriVariables = new HashMap<>();
     paymentServiceUriVariables.put("userId", "123");
     paymentServiceUriVariables.put("price", movie.getPrice().toString());
@@ -58,7 +61,7 @@ public class MovieBookingController {
         wBuilder
             .build()
             .get()
-            .uri(paymentServiceUri, paymentServiceUriVariables)
+            .uri(propertyConfig.getPaymentServiceUri(), paymentServiceUriVariables)
             .retrieve()
             .bodyToMono(PaymentSheet.class)
             .block();
