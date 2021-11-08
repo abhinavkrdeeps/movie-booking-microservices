@@ -12,6 +12,7 @@ import java.util.*;
 @RequestMapping("/movies")
 public class MovieResource {
 
+
     @GetMapping
     public List<Movie> getAllMovies(){
        List<Movie> movies = new ArrayList<>();
